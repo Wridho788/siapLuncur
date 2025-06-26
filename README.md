@@ -1,5 +1,7 @@
 # siap-luncur
 
+![CI](https://github.com/USERNAME/REPO_NAME/actions/workflows/ci.yml/badge.svg)
+
 **SiapLuncur** adalah platform pembuat landing page sederhana untuk pelaku UMKM Indonesia. Tanpa perlu keahlian teknis, pengguna bisa membuat halaman promosi dalam waktu kurang dari 10 menit.
 
 ## 🎯 Tujuan Proyek
