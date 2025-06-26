@@ -4,14 +4,13 @@ import { useState } from "react"
 import { Input } from "@ui/input"
 import { Button } from "@ui/button"
 import { useAuth } from "@store/authStore"
-import { cn } from "@lib/utils"
 
 interface AuthFormProps {
   mode: "login" | "register"
 }
 
 export default function AuthForm({ mode }: AuthFormProps) {
-  const { login, logout, loading, checkSession, user } = useAuth()
+  const { login, loading } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -28,8 +27,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
         if (regErr) throw regErr
         await login(email, password)
       }
-    } catch (err: any) {
-      setError(err.message ?? "Terjadi kesalahan")
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message ?? "Terjadi kesalahan")
+      } else {
+        setError("Terjadi kesalahan")
+      }
     }
   }
 
