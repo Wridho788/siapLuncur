@@ -1,6 +1,7 @@
 # siap-luncur
 
 [![CI](https://github.com/Wridho788/siapluncur/actions/workflows/ci.yml/badge.svg)](https://github.com/Wridho788/siapluncur/actions)
+[![Vercel](https://vercelbadge.vercel.app/api/Wridho788/siapluncur)](https://siapluncur.vercel.app)
 
 **SiapLuncur** adalah platform pembuat landing page sederhana untuk pelaku UMKM Indonesia. Tanpa perlu keahlian teknis, pengguna bisa membuat halaman promosi dalam waktu kurang dari 10 menit.
 
