@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Input } from "@ui/input"
 import { Button } from "@ui/button"
 import { useAuth } from "@store/authStore"
+import { useRouter } from "next/navigation"
 
 interface AuthFormProps {
   mode: "login" | "register"
@@ -14,24 +15,34 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   const handleSubmit = async () => {
+    console.log("🔄 Starting auth process...", { mode, email });
     try {
       if (mode === "login") {
-        await login(email, password)
+        console.log("🔑 Attempting login...");
+        await login(email, password);
+        console.log("✅ Login successful!");
+        router.push("/dashboard");
       } else {
         // register then auto‑login
-        await useAuth.getState().logout() // reset
-        const { register } = await import("@/api/auth").then((m) => ({ register: m.authService.register }))
-        const { error: regErr } = await register(email, password)
-        if (regErr) throw regErr
-        await login(email, password)
+        console.log("📝 Attempting registration...");
+        await useAuth.getState().logout(); // reset
+        const { register } = await import("@/api/auth").then((m) => ({ register: m.authService.register }));
+        const { error: regErr } = await register(email, password);
+        if (regErr) throw regErr;
+        console.log("✅ Registration successful, now logging in...");
+        await login(email, password);
+        console.log("✅ Auto-login successful!");
+        router.push("/dashboard");
       }
     } catch (err: unknown) {
+      console.error("❌ Auth error:", err);
       if (err instanceof Error) {
-        setError(err.message ?? "Terjadi kesalahan")
+        setError(err.message ?? "Terjadi kesalahan");
       } else {
-        setError("Terjadi kesalahan")
+        setError("Terjadi kesalahan");
       }
     }
   }

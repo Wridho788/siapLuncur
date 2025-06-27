@@ -15,10 +15,16 @@ export const useAuth = create<AuthStore>((set) => ({
   loading: false,
 
   login: async (email, password) => {
-    set({ loading: true })
-    const { data, error } = await authService.login(email, password)
-    set({ loading: false, user: data?.user || null })
-    if (error) throw error
+    console.log("🔄 AuthStore: Starting login...", { email });
+    set({ loading: true });
+    const { data, error } = await authService.login(email, password);
+    console.log("📤 AuthService response:", { data: data?.user?.email, error });
+    set({ loading: false, user: data?.user || null });
+    if (error) {
+      console.error("❌ AuthStore: Login failed:", error);
+      throw error;
+    }
+    console.log("✅ AuthStore: Login successful, user set:", data?.user?.email);
   },
 
   logout: async () => {
