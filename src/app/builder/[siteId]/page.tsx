@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { useParams } from "next/navigation"
 
 interface Feature {
   icon: string
@@ -13,8 +14,9 @@ interface Feature {
   desc: string
 }
 
-export default function BuilderPage({ params }: { params: { id: string } }) {
-  const siteId = params.id
+export default function BuilderPage() {
+  const params = useParams();
+  const siteId = params.id as string;
   const [site, setSite] = useState<Site | null>(null)
   const [heroTitle, setHeroTitle] = useState("")
   const [heroDescription, setHeroDescription] = useState("")

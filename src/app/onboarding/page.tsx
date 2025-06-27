@@ -7,6 +7,7 @@ import TemplateCard from "@/components/TemplateCard";
 import { supabase } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
 import Modal from "@/components/ui/Modal";
+import Image from "next/image";
 
 export default function OnboardingPage() {
   const { user } = useAuth();
@@ -74,7 +75,7 @@ export default function OnboardingPage() {
       {previewTpl && (
         <Modal onClose={() => setPreviewTpl(null)}>
           <div className="p-4 max-w-lg w-full">
-            <img src={previewTpl.image} alt={previewTpl.name} className="rounded-lg w-full mb-4" />
+            <Image src={previewTpl.image} alt={previewTpl.name} width={400} height={220} className="rounded-lg w-full mb-4" />
             <h2 className="text-xl font-bold mb-2">{previewTpl.name}</h2>
             <p className="mb-4 text-muted-foreground">{previewTpl.desc}</p>
             <div className="mb-2">
