@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Input } from "@ui/input"
-import { Button } from "@ui/button"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@store/authStore"
 import { useRouter } from "next/navigation"
 
@@ -15,16 +16,20 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async () => {
+    setError(null);
+    setSuccess(null);
     console.log("🔄 Starting auth process...", { mode, email });
     try {
       if (mode === "login") {
         console.log("🔑 Attempting login...");
         await login(email, password);
-        console.log("✅ Login successful!");
-        router.push("/dashboard");
+        setSuccess("Login berhasil! Mengarahkan ke dashboard...");
+        setTimeout(() => router.push("/dashboard"), 1000);
       } else {
         // register then auto‑login
         console.log("📝 Attempting registration...");
@@ -32,10 +37,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
         const { register } = await import("@/api/auth").then((m) => ({ register: m.authService.register }));
         const { error: regErr } = await register(email, password);
         if (regErr) throw regErr;
-        console.log("✅ Registration successful, now logging in...");
+        setSuccess("Registrasi berhasil! Login otomatis...");
         await login(email, password);
-        console.log("✅ Auto-login successful!");
-        router.push("/dashboard");
+        setSuccess("Login berhasil! Mengarahkan ke dashboard...");
+        setTimeout(() => router.push("/dashboard"), 1000);
       }
     } catch (err: unknown) {
       console.error("❌ Auth error:", err);
@@ -48,28 +53,57 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <div className="space-y-4 w-full max-w-sm mx-auto">
-      <h1 className="font-heading text-2xl text-center text-primary">
-        {mode === "login" ? "Masuk" : "Daftar"} SiapLuncur
+    <div className="space-y-6 w-full max-w-sm mx-auto">
+      <h1 className="font-heading text-2xl text-center text-primary mb-2">
+        {mode === "login" ? "Masuk" : "Daftar"}
       </h1>
       {error && (
-        <p className="text-sm text-red-500 text-center border border-red-300 bg-red-50 rounded p-2">
-          {error}
-        </p>
+        <div className="flex items-center justify-center">
+          <span className="text-sm text-red-600 border border-red-200 bg-red-50 rounded px-3 py-2 w-full text-center">
+            {error}
+          </span>
+        </div>
       )}
-      <Input
-        placeholder="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button className="w-full" onClick={handleSubmit} disabled={loading}>
+      {success && (
+        <div className="flex items-center justify-center">
+          <span className="text-sm text-green-700 border border-green-200 bg-green-50 rounded px-3 py-2 w-full text-center">
+            {success}
+          </span>
+        </div>
+      )}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-muted-foreground mb-1" htmlFor="email">Email</label>
+        <Input
+          id="email"
+          placeholder="Masukkan email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+        />
+      </div>
+      <div className="space-y-3 relative">
+        <label className="block text-sm font-medium text-muted-foreground mb-1" htmlFor="password">Password</label>
+        <Input
+          id="password"
+          placeholder="Masukkan password"
+          type={showPassword ? "text" : "password"}
+          autoComplete={mode === "login" ? "current-password" : "new-password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all pr-10"
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          className="absolute right-3 top-8 text-muted-foreground hover:text-primary focus:outline-none"
+          onClick={() => setShowPassword((v) => !v)}
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+      <Button className="w-full mt-2 shadow-sm hover:shadow-md transition-all" onClick={handleSubmit} disabled={loading}>
         {loading ? "Memproses…" : mode === "login" ? "Masuk" : "Daftar"}
       </Button>
     </div>

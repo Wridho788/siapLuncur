@@ -8,7 +8,7 @@ export default function AuthTest() {
 
   useEffect(() => {
     checkSession()
-  }, [])
+  }, [checkSession])
 
   return (
     <div className="p-4 space-y-4">
