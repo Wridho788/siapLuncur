@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { siteService, Site } from "@/api/site";
 import { templates } from "@/api/templates";
+import Image from "next/image";
 
 export default function PublicSitePage() {
   const params = useParams();
@@ -22,7 +23,11 @@ export default function PublicSitePage() {
   if (loading) return <div className="p-8">Memuat halaman publik...</div>;
   if (!site ) return <div className="p-8 text-red-600">Halaman tidak ditemukan atau belum dipublish.</div>;
 
-  const config = (site.config || {}) as any;
+  const config = (site.config || {}) as {
+    hero?: { title?: string; description?: string; buttonText?: string };
+    features?: { icon: string; title: string; desc: string }[];
+    cta?: { whatsapp?: string; message?: string };
+  };
   const hero = config.hero || {};   
   const features = Array.isArray(config.features) ? config.features : [];
   const cta = config.cta || {};
@@ -33,7 +38,7 @@ export default function PublicSitePage() {
       <div className="w-full max-w-2xl bg-background/90 rounded-2xl shadow-xl border border-border p-8 flex flex-col gap-8 animate-fade-in">
         <div className="flex items-center gap-4 mb-4">
           {selectedTemplate && (
-            <img src={selectedTemplate.image} alt={selectedTemplate.name} className="w-16 h-16 rounded-lg border object-cover" />
+            <Image src={selectedTemplate.image} alt={selectedTemplate.name} width={64} height={64} className="w-16 h-16 rounded-lg border object-cover" />
           )}
           <div>
             <h1 className="text-2xl font-bold text-primary mb-1">{site.name}</h1>
@@ -54,7 +59,7 @@ export default function PublicSitePage() {
         <div>
           <h3 className="font-bold mb-2">Fitur Produk / Layanan</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {features.filter((f:any) => f.title || f.desc).map((feat:any, i:number) => (
+            {features.filter((f) => f.title || f.desc).map((feat, i) => (
               <div key={i} className="border border-border bg-muted/40 p-4 rounded-xl shadow-sm flex flex-col gap-1">
                 <div className="text-2xl">{feat.icon}</div>
                 <div className="font-semibold">{feat.title}</div>

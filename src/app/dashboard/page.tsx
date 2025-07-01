@@ -10,32 +10,6 @@ import { v4 as uuidv4 } from "uuid"
 import SiteCard from "@/components/SiteCard"
 import { useUserSites } from "@/hooks/useUserSites";
 
-interface Site {
-  id: string;
-  user_id: string;
-  slug: string;
-  template: string;
-  name: string;
-  config: Record<string, unknown>; // ubah jadi wajib agar match global type
-  lastEdit?: string;
-}
-
-// Dummy fetch dari Supabase (ganti dengan fetch asli jika sudah ada backend)
-async function fetchUserSites(userId: string) {
-  // Simulasi: return array kosong jika belum ada site, atau array 1+ jika sudah ada
-  // return []
-  const { data, error } = await supabase.from("sites").select("id, user_id, slug, template, name, config, updated_at").eq("user_id", userId)
-  if (error) return []
-  return (data || []).map((d: Site & { updated_at?: string }) => ({
-    id: d.id,
-    user_id: d.user_id,
-    slug: d.slug,
-    template: d.template,
-    name: d.name,
-    config: d.config ?? {}, // fallback agar tidak undefined
-    lastEdit: d.updated_at || "-"
-  }))
-}
 
 async function createSite(site: { user_id: string; slug: string; template: string; name: string }) {
   // Simulasi insert ke Supabase

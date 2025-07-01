@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { useParams } from "next/navigation"
 import { templates } from "@/api/templates"
+import Image from "next/image"
 
 interface Feature {
   icon: string
@@ -132,7 +133,7 @@ export default function BuilderPage() {
     <div className="max-w-3xl mx-auto p-8 space-y-8 bg-white/80 rounded-2xl shadow-2xl border border-border mt-8 mb-12 animate-fade-in">
       <div className="flex items-center gap-4 mb-6">
         {selectedTemplate && (
-          <img src={selectedTemplate.image} alt={selectedTemplate.name} className="w-20 h-20 rounded-xl shadow border border-border object-cover" />
+          <Image src={selectedTemplate.image} alt={selectedTemplate.name} width={80} height={80} className="w-20 h-20 rounded-xl shadow border border-border object-cover" />
         )}
         <div>
           <h1 className="text-3xl font-extrabold text-primary font-heading leading-tight mb-1">{site.name}</h1>

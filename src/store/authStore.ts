@@ -2,11 +2,19 @@ import { create } from "zustand"
 import { User, Session } from "@supabase/supabase-js"
 import { authService } from "@/api/auth"
 
+type LoginResult = {
+  data: {
+    user: User | null;
+    session: Session | null;
+  } | null;
+  error: unknown;
+};
+
 type AuthStore = {
   user: User | null
   session: Session | null
   loading: boolean
-  login: (email: string, password: string) => Promise<any>
+  login: (email: string, password: string) => Promise<LoginResult>
   logout: () => Promise<void>
   checkSession: () => void
 }
