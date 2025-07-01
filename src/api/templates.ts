@@ -3,7 +3,7 @@ export const templates = [
   {
     id: "default",
     name: "Template Default",
-    image: "/template-default.png",
+    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80", // Unsplash: bisnis/umkm umum
     desc: "Tampilan sederhana, cocok untuk semua jenis usaha.",
     defaultBlocks: {
       hero: "Selamat datang di halaman UMKM Anda!",
@@ -14,7 +14,7 @@ export const templates = [
   {
     id: "modern",
     name: "Template Modern",
-    image: "/template-modern.png",
+    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=600&q=80", // Unsplash: modern workspace
     desc: "Desain modern, warna dinamis, cocok untuk UMKM kekinian.",
     defaultBlocks: {
       hero: "Grow your business with a modern landing page!",
@@ -25,7 +25,7 @@ export const templates = [
   {
     id: "simple",
     name: "Template Simple",
-    image: "/template-simple.png",
+    image: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=600&q=80", // Unsplash: simple minimal
     desc: "Minimalis, mudah dibaca, fokus pada info utama.",
     defaultBlocks: {
       hero: "Info utama UMKM Anda di sini.",

@@ -11,6 +11,7 @@ export default async function LoginPage() {
   // Example server‑side redirect if already logged in (token in cookie)
   const cookieStore = await cookies();
   const token = cookieStore.get("sb‑access‑token")?.value;
+  console.log('token:', cookieStore)
   if (token) {
     redirect("/dashboard");
   }

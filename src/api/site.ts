@@ -31,5 +31,21 @@ export const siteService = {
       .from("sites")
       .select("id, name, slug, template, created_at")   // ⬅️ pastikan id ikut
       .eq("user_id", userId)
-  }
+  },
+
+  publishSite: async (id: string) => {
+    // Update kolom is_published dan updated_at
+    const { data, error } = await supabase
+      .from("sites")
+      .update({ is_published: true, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select("slug")  // ambil slug untuk redirect
+
+    return { data: data?.[0], error }
+  },
+
+  getSiteBySlug: async (slug: string) => {
+    return await supabase.from("sites").select("*").eq("slug", slug).eq("is_published", true).single();
+  },
+
 }

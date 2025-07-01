@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Eye, EyeOff } from "lucide-react"
@@ -12,13 +12,26 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ mode }: AuthFormProps) {
-  const { login, loading } = useAuth()
+  const { login, loading, checkSession, session } = useAuth();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    checkSession();
+    // hanya panggil sekali saat mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // redirect jika session valid
+    if (session && typeof session.expires_at === "number" && session.expires_at > Math.floor(Date.now() / 1000)) {
+      router.push("/dashboard");
+    }
+  }, [session, router])
 
   const handleSubmit = async () => {
     setError(null);
@@ -27,7 +40,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
     try {
       if (mode === "login") {
         console.log("🔑 Attempting login...");
-        await login(email, password);
+        // Tangkap hasil response login
+        const loginResult = await login(email, password);
+        console.debug("[DEBUG] Login response:", loginResult);
+        // Ambil access_token jika ada
+        const accessToken = loginResult?.data?.session?.access_token;
+        console.debug("[DEBUG] Access Token:", accessToken);
         setSuccess("Login berhasil! Mengarahkan ke dashboard...");
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
@@ -38,7 +56,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
         const { error: regErr } = await register(email, password);
         if (regErr) throw regErr;
         setSuccess("Registrasi berhasil! Login otomatis...");
-        await login(email, password);
+        // Tangkap hasil response login setelah register
+        const loginResult = await login(email, password);
+        console.debug("[DEBUG] Login response after register:", loginResult);
+        // Ambil access_token jika ada
+        const accessToken = loginResult?.data?.session?.access_token;
+        console.debug("[DEBUG] Access Token after register:", accessToken);
         setSuccess("Login berhasil! Mengarahkan ke dashboard...");
         setTimeout(() => router.push("/dashboard"), 1000);
       }

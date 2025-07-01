@@ -2,8 +2,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import type { Site } from "@/api/site";
+import { toast } from "sonner";
 
 export default function SiteCard({ site }: { site: Site & { lastEdit?: string } }) {
+  const publicUrl = site.slug ? `https://siapluncur.vercel.app/${site.slug}` : "";
+  const handleCopyUrl = () => {
+    if (!publicUrl) return;
+    navigator.clipboard.writeText(publicUrl);
+    toast.success("URL berhasil disalin!");
+  };
+
   return (
     <div className="bg-muted rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border border-dashed border-primary/30">
       <div className="flex-1">
@@ -16,12 +24,18 @@ export default function SiteCard({ site }: { site: Site & { lastEdit?: string } 
         <div className="text-xs text-muted-foreground">Terakhir diedit: {site.lastEdit ?? '-'}</div>
       </div>
       <div className="flex flex-col gap-2 md:gap-0 md:flex-row md:items-center md:justify-end">
+        <button
+          onClick={handleCopyUrl}
+          className="bg-white border border-primary text-primary font-semibold rounded px-3 py-1 mb-2 md:mb-0 md:mr-2 hover:bg-primary hover:text-white transition-all"
+        >
+          Copy URL
+        </button>
         <Link href={`/builder/${site.id}`}>
           <Button size="sm" variant="outline" className="border-cyan-600 text-cyan-700 mr-0 md:mr-2 flex items-center gap-1">
             <Pencil size={16} /> Edit
           </Button>
         </Link>
-        <Link href={`/preview/${site.slug}`} target="_blank">
+        <Link href={site.slug ? `/p/${site.slug}` : "#"} target="_blank">
           <Button size="sm" className="bg-gradient-to-r from-primary to-blue-500 text-white font-semibold ml-0 md:ml-2 flex items-center gap-1">
             <Eye size={16} /> Preview
           </Button>

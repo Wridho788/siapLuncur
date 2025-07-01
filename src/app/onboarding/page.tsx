@@ -38,9 +38,11 @@ export default function OnboardingPage() {
       ]).select();
       if (error) throw error;
       const siteId = data?.[0]?.id;
-      if (siteId) {
-        router.push(`/builder/${siteId}`);
+      if (!siteId) {
+        setError("Gagal membuat site: ID tidak ditemukan. Silakan coba lagi.");
+        return;
       }
+      router.push(`/builder/${siteId}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || "Gagal membuat site");
@@ -86,7 +88,11 @@ export default function OnboardingPage() {
               <div className="font-semibold">Contact:</div>
               <div className="bg-muted rounded p-2">{previewTpl.defaultBlocks.contact}</div>
             </div>
-            <button className="mt-4 w-full bg-primary text-white py-2 rounded" onClick={() => { setPreviewTpl(null); handleSelect(previewTpl.id); }}>
+            <button className="mt-4 w-full bg-primary text-white py-2 rounded" onClick={() => { 
+              console.debug("[DEBUG] Pilih Template:", previewTpl);
+              setPreviewTpl(null); 
+              handleSelect(previewTpl.id); 
+            }}>
               Pilih Template Ini
             </button>
           </div>
