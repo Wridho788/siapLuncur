@@ -52,16 +52,25 @@ export default function AuthForm({ mode }: AuthFormProps) {
         // register then auto‑login
         console.log("📝 Attempting registration...");
         await useAuth.getState().logout(); // reset
+        console.debug("[DEBUG] Logout state cleared before register");
         const { register } = await import("@/api/auth").then((m) => ({ register: m.authService.register }));
-        const { error: regErr } = await register(email, password);
+        console.debug("[DEBUG] Register function loaded");
+        const { error: regErr, data: regData } = await register(email, password);
+        console.debug("[DEBUG] Register response:", { regErr, regData });
         if (regErr) throw regErr;
         setSuccess("Registrasi berhasil! Login otomatis...");
         // Tangkap hasil response login setelah register
+        console.log("🔑 Attempting auto-login after register...");
         const loginResult = await login(email, password);
         console.debug("[DEBUG] Login response after register:", loginResult);
         // Ambil access_token jika ada
         const accessToken = loginResult?.data?.session?.access_token;
         console.debug("[DEBUG] Access Token after register:", accessToken);
+        if (loginResult?.data?.user) {
+          console.log("✅ User aktif setelah register:", loginResult.data.user);
+        } else {
+          console.warn("⚠️ User belum aktif setelah register");
+        }
         setSuccess("Login berhasil! Mengarahkan ke dashboard...");
         setTimeout(() => router.push("/dashboard"), 1000);
       }
@@ -76,59 +85,47 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <div className="space-y-6 w-full max-w-sm mx-auto">
-      <h1 className="font-heading text-2xl text-center text-primary mb-2">
-        {mode === "login" ? "Masuk" : "Daftar"}
-      </h1>
-      {error && (
-        <div className="flex items-center justify-center">
-          <span className="text-sm text-red-600 border border-red-200 bg-red-50 rounded px-3 py-2 w-full text-center">
-            {error}
-          </span>
-        </div>
-      )}
-      {success && (
-        <div className="flex items-center justify-center">
-          <span className="text-sm text-green-700 border border-green-200 bg-green-50 rounded px-3 py-2 w-full text-center">
-            {success}
-          </span>
-        </div>
-      )}
-      <div className="space-y-3">
-        <label className="block text-sm font-medium text-muted-foreground mb-1" htmlFor="email">Email</label>
+    <form
+      className="w-full flex flex-col gap-4"
+      onSubmit={e => { e.preventDefault(); handleSubmit(); }}
+    >
+      <Input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        className="w-full py-3 text-base min-h-[44px]"
+        autoComplete="email"
+        required
+      />
+      <div className="relative w-full">
         <Input
-          id="email"
-          placeholder="Masukkan email"
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
-        />
-      </div>
-      <div className="space-y-3 relative">
-        <label className="block text-sm font-medium text-muted-foreground mb-1" htmlFor="password">Password</label>
-        <Input
-          id="password"
-          placeholder="Masukkan password"
           type={showPassword ? "text" : "password"}
-          autoComplete={mode === "login" ? "current-password" : "new-password"}
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all pr-10"
+          onChange={e => setPassword(e.target.value)}
+          className="w-full py-3 text-base min-h-[44px] pr-10"
+          autoComplete={mode === "login" ? "current-password" : "new-password"}
+          required
         />
         <button
           type="button"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+          onClick={() => setShowPassword(v => !v)}
           tabIndex={-1}
-          className="absolute right-3 top-8 text-muted-foreground hover:text-primary focus:outline-none"
-          onClick={() => setShowPassword((v) => !v)}
         >
-          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
       </div>
-      <Button className="w-full mt-2 shadow-sm hover:shadow-md transition-all" onClick={handleSubmit} disabled={loading}>
-        {loading ? "Memproses…" : mode === "login" ? "Masuk" : "Daftar"}
+      {error && <div className="text-red-600 text-sm mt-1">{error}</div>}
+      {success && <div className="text-green-600 text-sm mt-1">{success}</div>}
+      <Button
+        type="submit"
+        className="w-full py-3 text-base min-h-[44px] mt-2"
+        disabled={loading}
+      >
+        {loading ? "Memproses..." : mode === "login" ? "Masuk" : "Daftar"}
       </Button>
-    </div>
+    </form>
   )
 }

@@ -54,6 +54,10 @@ export default function OnboardingPage() {
     }
   };
 
+  const handlePreview = (templateId: string) => {
+    router.push(`/template/${templateId}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white via-cyan-50 to-blue-100 py-12 px-4">
       <div className="w-full max-w-3xl mx-auto">
@@ -69,7 +73,7 @@ export default function OnboardingPage() {
               image={tpl.image}
               onSelect={() => handleSelect(tpl.id)}
               loading={loadingId === tpl.id}
-              onPreview={() => setPreviewTpl(tpl)}
+              onPreview={() => handlePreview(tpl.id)}
             />
           ))}
         </div>
