@@ -4,8 +4,13 @@ import UseTemplateButton from "@/components/template/UseTemplateButton";
 import { templates } from "@/api/templates";
 import { notFound } from "next/navigation";
 
-export default function TemplatePreviewPage({ params }: { params: { templateId: string } }) {
-  const template = templates.find(t => t.id === params.templateId);
+export default async function TemplatePreviewPage({ 
+  params 
+}: { 
+  params: Promise<{ templateId: string }> 
+}) {
+  const { templateId } = await params;
+  const template = templates.find(t => t.id === templateId);
   if (!template) return notFound();
 
   return (
